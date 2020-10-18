@@ -6,7 +6,7 @@ Parameters:
     Description: Provide a environment name that will be added to prefix to resource names
     Type: String
     Default: N/W Workshop
-  VPC_CIDR:
+  VPCCIDR:
     Description: Please enter the IP range (CIDR notation) for this VPC
     Type: String
     AllowedPattern: ((\\d{1,3})\\.){3}\\d{1,3}/\\d{1,2}
