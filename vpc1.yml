@@ -8,7 +8,8 @@ Resources:
   VPC:
     Type: AWS::EC2::VPC
     Properties:
-      CidrBlock: !Ref ChildVPCCIDR
+      CidrBlock:
+        Ref: ChildVPCCIDR
       EnableDnsSupport: true
       EnableDnsHostnames: true
   InternetGateway:
@@ -18,23 +19,6 @@ Resources:
     Properties:
       InternetGatewayId: !Ref InternetGateway
       VpcId: !Ref VPC
-  Subnet0:
-    Type: AWS::CloudFormation::Stack
-    DependsOn: InternetGatewayAttachment
-    Properties:
-      TemplateURL: https://977116943932-networking-workshop.s3.us-east-2.amazonaws.com/nw-workshop-public-subnet.yml
-      Parameters:
-        ChildSubnetCIDR: !Select [ 0, !Cidr [ !Ref  ChildVPCCIDR, 2, 8 ]]
-        VPC: !Ref VPC
-        InternetGateway: !Ref InternetGateway
-  Subnet1:
-    Type: AWS::CloudFormation::Stack
-    DependsOn: InternetGatewayAttachment
-    Properties:
-      TemplateURL: https://977116943932-networking-workshop.s3.us-east-2.amazonaws.com/nw-workshop-private-subnet.yml
-      Parameters:
-        ChildSubnetCIDR: !Select [ 1, !Cidr [ !Ref  ChildVPCCIDR, 2, 8 ]]
-        VPC: !Ref VPC
 Outputs:
   ChildVPCCIDR:
     Value: !Ref ChildVPCCIDR
