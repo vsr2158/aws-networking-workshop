@@ -14,26 +14,51 @@ Resources:
   InternetGateway:
     Type: AWS::EC2::InternetGateway
   InternetGatewayAttachment:
+    DependsOn: VPC
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
       InternetGatewayId: !Ref InternetGateway
       VpcId: !Ref VPC
+  InstanceSecurityGroup:
+    DependsOn: VPC
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable SSH and ICMP access
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: icmp
+        FromPort: 8
+        ToPort: -1
+        CidrIp: 0.0.0.0/0
   Subnet0:
     Type: AWS::CloudFormation::Stack
     DependsOn: InternetGatewayAttachment
     Properties:
       TemplateURL: https://977116943932-networking-workshop.s3.us-east-2.amazonaws.com/nw-workshop-public-subnet.yml
       Parameters:
-        ChildSubnetCIDR: !Select [ 0, !Cidr [ !Ref  ChildVPCCIDR, 2, 8 ]]
+        ChildSubnetCIDR: !Select [ 0, !Cidr [ !Ref  ChildVPCCIDR, 4, 8 ]]
         VPC: !Ref VPC
         InternetGateway: !Ref InternetGateway
+        InstanceSecurityGroup: !Ref InstanceSecurityGroup
   Subnet1:
     Type: AWS::CloudFormation::Stack
     DependsOn: InternetGatewayAttachment
     Properties:
       TemplateURL: https://977116943932-networking-workshop.s3.us-east-2.amazonaws.com/nw-workshop-private-subnet.yml
       Parameters:
-        ChildSubnetCIDR: !Select [ 1, !Cidr [ !Ref  ChildVPCCIDR, 2, 8 ]]
+        ChildSubnetCIDR: !Select [ 1, !Cidr [ !Ref  ChildVPCCIDR, 4, 8 ]]
+        VPC: !Ref VPC
+  Subnet2:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      TemplateURL: https://977116943932-networking-workshop.s3.us-east-2.amazonaws.com/nw-workshop-private-subnet.yml
+      Parameters:
+        ChildSubnetCIDR: !Select [ 2, !Cidr [ !Ref  ChildVPCCIDR, 4, 8 ]]
         VPC: !Ref VPC
 Outputs:
   ChildVPCCIDR:
