@@ -10,18 +10,16 @@ Parameters:
     Description: Please enter the IP range (CIDR notation) for this Region
     Type: String
     Default: 10.0.0.0/16
-
 Resources:
-  # Non-Prod 1 Resources
   VPC0:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: https://977116943932-networking-workshop.s3.us-east-2.amazonaws.com/nw-workshop-vpc.yml
       Parameters:
         ChildVPCCIDR: !Select [ 0, !Cidr [ !Ref  RegionCIDR, 2, 14 ]]
-  #VPC1:
-  #  Type: AWS::CloudFormation::Stack
-  #  Properties:
-  #    TemplateURL: https://977116943932-networking-workshop.s3.us-east-2.amazonaws.com/nw-workshop-vpc.yml
-  #    Parameters:
-  #      ChildVPCCIDR: !Select [ 1, !Cidr [ !Ref  RegionCIDR, 2, 14 ]]
+#  VPC1:
+#    Type: AWS::CloudFormation::Stack
+#    Properties:
+#      TemplateURL: https://977116943932-networking-workshop.s3.us-east-2.amazonaws.com/nw-workshop-vpc.yml
+#      Parameters:
+#        ChildVPCCIDR: !Select [ 1, !Cidr [ !Ref  RegionCIDR, 2, 14 ]]
