@@ -10,11 +10,16 @@ Parameters:
   InternetGateway:
     Description: IGW_ID
     Type: String
+  InstanceSecurityGroup:
+    Description: Security Grp for EC2 Instances
+    Type: String
 Resources:
   PublicSubnet:
     Type: AWS::EC2::Subnet
     Properties:
-      #AvailabilityZone: !Select [0, !GetAZs AWS::Region]
+      AvailabilityZone: !Select
+        - 0
+        - Fn::GetAZs: !Ref 'AWS::Region'
       CidrBlock: !Ref ChildSubnetCIDR
       MapPublicIpOnLaunch: true
       VpcId: !Ref VPC
@@ -23,13 +28,32 @@ Resources:
     Properties:
       VpcId: !Ref VPC
   DefaultPublicRoute:
+    DependsOn: PublicRouteTable
     Type: AWS::EC2::Route
     Properties:
       RouteTableId: !Ref PublicRouteTable
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref InternetGateway
   PublicSubnetRouteTableAssociation:
+    DependsOn: PublicSubnet
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       RouteTableId: !Ref PublicRouteTable
       SubnetId: !Ref PublicSubnet
+  EC2Instance:
+    DependsOn: PublicSubnet
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0947d2ba12ee1ff75
+      InstanceType: t2.micro
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: '0'
+          DeleteOnTermination: true
+          SubnetId: !Ref PublicSubnet
+          GroupSet:
+            - !Ref InstanceSecurityGroup
+      UserData: !Base64 "#!/bin/bash -v\n/bin/echo 'lAbNptQKdX' | /bin/passwd cloud_user --stdin\nyum update -y\n"
+      Tags:
+        - Key: Name
+          Value: Bastion Host
