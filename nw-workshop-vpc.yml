@@ -52,6 +52,7 @@ Resources:
       Parameters:
         ChildSubnetCIDR: !Select [ 1, !Cidr [ !Ref  ChildVPCCIDR, 4, 8 ]]
         VPC: !Ref VPC
+        InstanceSecurityGroup: !Ref InstanceSecurityGroup
   Subnet2:
     Type: AWS::CloudFormation::Stack
     DependsOn: InternetGatewayAttachment
@@ -60,6 +61,7 @@ Resources:
       Parameters:
         ChildSubnetCIDR: !Select [ 2, !Cidr [ !Ref  ChildVPCCIDR, 4, 8 ]]
         VPC: !Ref VPC
+        InstanceSecurityGroup: !Ref InstanceSecurityGroup
 Outputs:
   ChildVPCCIDR:
     Value: !Ref ChildVPCCIDR

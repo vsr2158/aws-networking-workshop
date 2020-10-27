@@ -53,7 +53,7 @@ Resources:
           SubnetId: !Ref PublicSubnet
           GroupSet:
             - !Ref InstanceSecurityGroup
-      UserData: !Base64 "#!/bin/bash -v\n/bin/echo 'lAbNptQKdX' | /bin/passwd cloud_user --stdin\nyum update -y\n"
+      UserData: !Base64 "#!/bin/bash -v\n/bin/sudo su\n/bin/echo 'pa55w0rd' | /bin/passwd ec2-user --stdin\nyum update -y\nsed -i  's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config\nsed -i  's/#PermitRootLogin yes/PermitRootLogin yes/g' /etc/ssh/sshd_config\nsystemctl restart sshd\n"
       Tags:
         - Key: Name
           Value: Bastion Host

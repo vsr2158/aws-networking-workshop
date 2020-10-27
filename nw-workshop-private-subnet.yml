@@ -7,6 +7,9 @@ Parameters:
   VPC:
     Description: VPC_ID
     Type: String
+  InstanceSecurityGroup:
+    Description: Security Grp for EC2 Instances
+    Type: String
 Resources:
   PrivateSubnet:
     Type: AWS::EC2::Subnet
@@ -17,3 +20,20 @@ Resources:
       CidrBlock: !Ref ChildSubnetCIDR
       MapPublicIpOnLaunch: false
       VpcId: !Ref VPC
+  EC2Instance:
+      DependsOn: PrivateSubnet
+      Type: AWS::EC2::Instance
+      Properties:
+        ImageId: ami-0947d2ba12ee1ff75
+        InstanceType: t2.micro
+        NetworkInterfaces:
+          - AssociatePublicIpAddress: false
+            DeviceIndex: '0'
+            DeleteOnTermination: true
+            SubnetId: !Ref PrivateSubnet
+            GroupSet:
+              - !Ref InstanceSecurityGroup
+        UserData: !Base64 "#!/bin/bash -v\n/bin/sudo su\n/bin/echo 'pa55w0rd' | /bin/passwd ec2-user --stdin\nyum update -y\nsed -i  's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config\nsed -i  's/#PermitRootLogin yes/PermitRootLogin yes/g' /etc/ssh/sshd_config\nsystemctl restart sshd\n"
+        Tags:
+          - Key: Name
+            Value: Private Host

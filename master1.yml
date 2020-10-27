@@ -29,3 +29,8 @@ Resources:
       TemplateURL: https://977116943932-networking-workshop.s3.us-east-2.amazonaws.com/nw-workshop-vpc.yml
       Parameters:
         ChildVPCCIDR: !Select [ 1, !Cidr [ !Ref  RegionCIDR, 2, 14 ]]
+  AccessKey:
+    DependsOn: VPC
+    Type: AWS::IAM::AccessKey
+    Properties:
+      UserName: cloud_user
