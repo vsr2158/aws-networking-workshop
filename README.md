@@ -12,15 +12,15 @@
   
 ### Instructions 
 * Instructions for Multi VPC and Multi account networking architecture using VPC peering
-  * Prepare a Multi VPC and Multi Account design that should be someting like below:
+  * Prepare a Multi VPC and Multi Account design that should be someting like below, ideally create on a sharable spreadsheet that all lab participants can refer to, :
 
 
-AWS Account Number | Region | Region CIDR | Autonomous Number
--------------------|--------|-------------|-------------------
-XXXXXXXXXXXX| us-east-1 |  10.0.0.0/16 | 64512
-XXXXXXXXXXXX| us-east-2 |  10.1.0.0/16 | 64512
-XXXXXXXXXXXX| us-west-1 |  10.2.0.0/16 | 64512
-XXXXXXXXXXXX| us-west-2 |  10.0.0.0/16 | 64512
+AWS Account Number | Region | Region CIDR | Autonomous Number| Candidate Name
+-------------------|--------|-------------|------------------|---------------
+XXXXXXXXXXXX| us-east-1 |  10.0.0.0/16 | 64512| James Bond
+XXXXXXXXXXXX| us-east-2 |  10.1.0.0/16 | 64512| 
+XXXXXXXXXXXX| us-west-1 |  10.2.0.0/16 | 64512|
+XXXXXXXXXXXX| us-west-2 |  10.0.0.0/16 | 64512|
 
 
 
