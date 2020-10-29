@@ -1,6 +1,11 @@
 # Networking Workshop
 
-## This Networking Workshop will cover the following AWS Networking topicc and aims to help customers and partnerd migrate from VPC peering to Transit Gateway with minimum downtime.
+## This Networking Workshop aims to help customers and partners migrate from VPC peering to Transit Gateway with minimum downtime.
+
+### Prerequisites:
+* Hands on working knowledge with AWS
+* Foundational knowledge of IP Networking
+* Atleast one AWS account with admin privileges
 
 ### Modules:
 * Multi VPC and Multi account networking architecture using VPC peering
@@ -17,10 +22,11 @@
 
 AWS Account Number | Region | Region CIDR | Autonomous Number| Candidate Name
 -------------------|--------|-------------|------------------|---------------
-XXXXXXXXXXXX| us-east-1 |  10.0.0.0/16 | 64512| James Bond
-XXXXXXXXXXXX| us-east-2 |  10.1.0.0/16 | 64512| 
-XXXXXXXXXXXX| us-west-1 |  10.2.0.0/16 | 64512|
-XXXXXXXXXXXX| us-west-2 |  10.0.0.0/16 | 64512|
+XXXXXXXXXXXX| us-east-1 |  10.0.0.0/16 | 64512| Spider Man
+XXXXXXXXXXXX| us-east-2 |  10.1.0.0/16 | 64513| Captainm America
+XXXXXXXXXXXX| us-west-1 |  10.2.0.0/16 | 64514| Hulk
+XXXXXXXXXXXX| us-west-2 |  10.0.0.0/16 | 64515| Bat Man
+
 
 
 
