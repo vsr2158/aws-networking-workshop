@@ -16,7 +16,7 @@ Resources:
   VPC0:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://977116943932-networking-workshop.s3.us-east-2.amazonaws.com/nw-workshop-vpc.yml
+      TemplateURL: https://<s3-bucket-name>.s3.us-east-2.amazonaws.com/nw-workshop-vpc.yml
       Parameters:
         ChildVPCCIDR: !Select [ 0, !Cidr [ !Ref  RegionCIDR, 2, 14 ]]
 #  VPC1:
