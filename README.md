@@ -47,11 +47,15 @@ Your core steps are now complete, please proceed to the next module.
     < Todo: Add a diagram of resources deployed > 
 * Explore the deployed resources, test SSH login to all the instances deployed by this stack. Note that instances in private subnet will require SSH from the Bastion host in Public subnet.
 #### Setup connectivity so the private instances in different VPCs can communicate between each other.
-* Task: Identify the two VPCs deployed using CloudFormation, setup peering between them and test using Ping between them
+* Task: Identify the two VPCs deployed using CloudFormation, setup peering between them and test using Ping between them, leave the terminal open and Ping running for later tasks.
 * Bonus Task: With with a partner who has deployed in a different region and achieve connectivity with that instance
 * Bonus Task: What is the max MTU supported between the instances within same Region? What is max MTU supported between instances across regions?
 
 #### Migrate from VPC peering to Transit Gateway (TGW) based connectivity with minimum downtime
  
 * Task: Deploy Transit Gateway (TGW) in the region. Remember TGW is a regional router and you can connect all VPCs in the same region belonging to this and other accounts to a single TGW
-* Task: Create a TGW attachment to 
+* Task: Create a TGW attachment to the VPC, check the TGW default roue table, what do you see? (A:CIDR from each VPC should be propogated to this route table)
+* Task: Notice the Ping responses between the instances continue without any interruption, why? (A: VPC route table still is pointing to the VPC peering connection to route to the other VPC) Now change the VPC Route table to point to the TGW attachment instead of VPC peering connection on both VPCs. How long many ICMP packets were lost? Can you deduct the approximate outage time?
+* Task: In the previous step you enabled routing between two VPCs via TGW, what should you do to allow all communication via transit gateway? (A: Add a single 10.0.0.0/8 route for all the VPCs pointing towards TGW attachment ) 
+
+
