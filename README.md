@@ -33,8 +33,6 @@ Your core steps are now complete, please proceed to the next module.
 
 ### Module1 Instructions:  
 * Deploy CloudFormation template
-* **Deploy CloudFormation template**
-
     * On AWS console, nagivate to `CloudFormation` service, ensure you are in the right region as allocated part of `Core Instructions`
     * Click on `Create Stack` > `Template is ready` > `Upload a template file` > `Chose file` > locate and upload the file named `nw-workshop-master`
     *  In `Stack Name` input a meaningful name , under parameters specify the `RegionCIDR` as allocated part of `Core Instructions` and leave the `EnvironemtName` as default.
@@ -47,6 +45,7 @@ Your core steps are now complete, please proceed to the next module.
     * Post Stack Deployment following resources are created:
 
         < Todo: Add a diagram of resources deployed > 
-* Next we are going to setup connectivity so the private instances can communicate between each other, we will make use of ICMP/Ping  to test two way rechability
 
+* Next we are going to setup connectivity so the private instances in different VPCs can communicate between each other, we will make use of ICMP/Ping to test two way rechability
+    * I dentify 
  
