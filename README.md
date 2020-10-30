@@ -41,11 +41,12 @@ Your core steps are now complete, please proceed to the next module.
         * `I acknowledge that AWS CloudFormation might create IAM resources with custom names.` 
         * `I acknowledge that AWS CloudFormation might require the following capability: CAPABILITY_AUTO_EXPAND` 
         *  Click `Create Stack`
-    * Stack creation will commence and will invoke nested stacks as required, you can watch the events  under the `Events Tab` on the console. Wait for stack to 
+    * Stack creation will commence and will invoke nested stacks as required, you can watch the events  under the `Events Tab` on the console. Wait for the stack deployment to complete.
     * Post Stack Deployment following resources are created:
 
         < Todo: Add a diagram of resources deployed > 
-
+    * Explore the deployed resources, test SSH login to all the instances deployed by this stack. Note that instances in private subnet will require SSH from the Bastion host in Public subnet.
 * Next we are going to setup connectivity so the private instances in different VPCs can communicate between each other, we will make use of ICMP/Ping to test two way rechability
-    * I dentify 
+    * Identify the two VPCs deployed using CloudFormation, setup peering between them and test using Ping between them
+    
  
