@@ -48,7 +48,7 @@ Your core steps are now complete, please proceed to the next module.
 
     < Todo: Add a diagram of resources deployed > 
     
-* Explore the deployed resources, test SSH login to all the instances deployed by this stack. Note that instances in private subnet will require SSH from the Bastion host in Public subnet.
+* Explore the deployed resources, test SSH login to all the instances deployed by this CloudFormation stack. Note that instances in private subnet will require SSH from the Bastion host in Public subnet.
 
 
 ## Module2: AWS Transit Gateway deployment and migration from VPC peering 
@@ -89,6 +89,6 @@ In this module we will simulate a Datacenter deployed on seperate AWS account (T
 
     < Todo: Add a diagram of resources deployed > 
     
-* Task: Explore the deployed resources, test SSH login to all the DC Bastion instances deployed by this stack.
+* Task: Explore the deployed resources, test SSH login to all the DC Bastion instances deployed by this CloudFormation stack.
 
-* Task: P
+* Task: 
