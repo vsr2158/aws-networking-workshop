@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: "2010-09-09"
+AWSTemplateFormatVersion: "2010-09-10"
 Description: "VPC template for simulated on-prem environment. "
 Parameters:
   VpcCidr:
@@ -564,3 +564,4 @@ Outputs:
     Value: !GetAtt AppServer.PrivateIp
   DnsServerPrivateIp:
     Value: !GetAtt DnsServer.PrivateIp
+#test
