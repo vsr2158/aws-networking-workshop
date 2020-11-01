@@ -13,6 +13,9 @@ Parameters:
   InstanceSecurityGroup:
     Description: Security Grp for EC2 Instances
     Type: String
+  LatestAmiId:
+    Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
+    Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
 Resources:
   PublicSubnet:
     Type: AWS::EC2::Subnet
@@ -44,7 +47,7 @@ Resources:
     DependsOn: PublicSubnet
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-0947d2ba12ee1ff75
+      ImageId: !Ref LatestAmiId
       InstanceType: t2.micro
       NetworkInterfaces:
         - AssociatePublicIpAddress: true
