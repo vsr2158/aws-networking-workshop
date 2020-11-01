@@ -15,6 +15,22 @@ Parameters:
     Default: t2.micro
     Description: Bastion EC2 instance type.
     Type: String
+  Tunnel1Ip:
+    Description: Enter the IP address for Tunnel 1 for the VPN connection
+    Type: String
+    Default: 1.1.1.1
+  Tunnel2Ip:
+    Description: Enter the IP address for Tunnel 1 for the VPN connection
+    Type: String
+    Default: 2.2.2.2
+  CgwAs:
+    Description: Enter AS Number specified on the Transit Gateway
+    Type: String
+    Default: 65000
+  TgwAs:
+    Description: Enter AS Number specified on the Transit Gateway
+    Type: String
+    Default: 64512
   LatestAmiId:
     Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
     Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
@@ -428,7 +444,6 @@ Resources:
             echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config
             echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
             systemctl restart sshd
-            #
             yum update -y
             yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
             amazon-linux-extras install epel
@@ -445,6 +460,11 @@ Resources:
             sysctl -p /etc/sysctl.conf
             PUBLICIP=$(curl -s http://169.254.169.254/2018-09-24/meta-data/public-ipv4)
             PRIVATEIP=$(curl -s http://169.254.169.254/2018-09-24/meta-data/local-ipv4)
+            CgwAs='${CgwAs}'
+            TgwAs='${TgwAs}'
+            Tunnel1Ip='${Tunnel1Ip}'
+            Tunnel2Ip='${Tunnel2Ip}'
+
             cat <<EOT >/etc/strongswan/ipsec.conf
             conn %default
               leftauth=psk
@@ -471,16 +491,16 @@ Resources:
             conn dc2aws1
               left={PRIVATE_IP}
               leftid={PUBLIC_IP}
-              right=TUNNEL_1_IP
-              rightid=TUNNEL_1_IP
+              right=$Tunnel1Ip
+              rightid=$Tunnel1Ip
               auto=start
               mark=100
 
             conn dc2aws2
               left={PRIVATE_IP}
               leftid={PUBLIC_IP}
-              right=TUNNEL_2_IP
-              rightid=TUNNEL_2_IP
+              right=$Tunnel2Ip
+              rightid=$Tunnel2Ip
               auto=start
               mark=200
 
@@ -490,11 +510,11 @@ Resources:
             password zebra
             log stdout
             !
-            router bgp 65000
+            router bgp $CgwAs
             bgp router-id 192.168.0.190
             network 192.168.0.0/16
-            neighbor 169.254.10.1 remote-as 64512
-            neighbor 169.254.11.1 remote-as 64512
+            neighbor 169.254.10.1 remote-as $TgwAs
+            neighbor 169.254.11.1 remote-as $TgwAs
             !
             line vty
             !
@@ -558,6 +578,7 @@ Resources:
             echo "$PUBLICIP $PRIVATEIP : PSK \"awsamazon\"" >> /etc/strongswan/ipsec.secrets
             systemctl enable strongswan
             systemctl enable bgpd
+            systemctl restart strongswan
             systemctl restart bgpd
       Tags:
         - Key: Name
