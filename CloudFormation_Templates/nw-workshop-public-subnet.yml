@@ -57,14 +57,30 @@ Resources:
           GroupSet:
             - !Ref InstanceSecurityGroup
       UserData:
-        Fn::Base64:
-          !Sub |
+        Fn::Base64: !Sub |
           #!/bin/bash
+          # install updates
           yum update -y
-          /bin/sudo su
+
+          # configure password based logon via SSH
+          sudo su
           /bin/echo 'pa55w0rd' | /bin/passwd ec2-user --stdin
-          sed -i  's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
-          sed -i  's/#PermitRootLogin yes/PermitRootLogin yes/g' /etc/ssh/sshd_config\nsystemctl restart sshd\n"
+          sed -i  '/PasswordAuthentication/d' /etc/ssh/sshd_config
+          sed -i  '/PermitRootLogin/d' /etc/ssh/sshd_config
+          echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config
+          echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
+          systemctl restart sshd
+          #
+
+          # configure AWS CLI for ec2-user
+          mkdir /home/ec2-user/.aws
+          cat > /home/ec2-user/.aws/config<< EOF
+          [default]
+          region = ${AWS::Region}
+          EOF
+
+          chown -r ec2-user:ec2-user /home/ec2-user/.aws
+
       Tags:
         - Key: Name
           Value: Bastion Host

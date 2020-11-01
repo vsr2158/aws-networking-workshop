@@ -20,7 +20,7 @@
 
 We will begin with a Multi VPC and Multi Account design that is uniqute to this workshop, please discuss and prepare something that resembles sample shown below
 
-AWS Account Number | AWS Region | AWS Region CIDR | Datacenter CIDR|  Autonomous System Number| Student Number | Student Name
+AWS Account ID | AWS Region | AWS Region CIDR | Datacenter CIDR|  Autonomous System Number| Student Number | Student Name
 ------------------|---------|-------------|----------------|-------------------|----------------|-------------
 AWS-Account-ID| us-east-1 |  10.0.0.0/16 |192.168.0.0/24 | 64512| 0| Spider Man
 AWS-Account-ID| us-east-2 |  10.1.0.0/16 |192.168.1.0/24 | 64513| 1| Captainm America
@@ -48,12 +48,14 @@ Your core steps are now complete, please proceed to the next module.
 
     < Todo: Add a diagram of resources deployed > 
     
-* Explore the deployed resources, test SSH login to all the instances deployed by this CloudFormation stack. Note that instances in private subnet will require SSH from the Bastion host in Public subnet.
-
+* TASK: Explore the deployed resources, test SSH login to all the instances deployed by this CloudFormation stack. Note that instances in private subnet will require SSH from the Bastion host in Public subnet.
+* TASK: Test reachability between all EC2 instances. Is there connectivity between EC2 instances within the VPC? Is there connectivity between EC2 instances between the VPCs?
+  
 
 ## Module2: AWS Transit Gateway deployment and migration from VPC peering 
 #### Setup connectivity so the private instances in different VPCs can communicate between each other.
-* Task: Identify the two VPCs deployed using CloudFormation, setup peering between them and test using Ping between them, leave the terminal open and Ping running for later tasks.
+* Task: Identify the two VPCs deployed using CloudFormation, setup VPC peering between them. Is there connectivity between EC2 instances between the VPCs now? Leave the terminal open and Ping running for later tasks.
+
 
 * Optional Bonus Task: With with a partner who has deployed in a different region and achieve connectivity with that instance
 * Optional Bonus Task: What is the max MTU supported between the instances within same Region? What is max MTU supported between instances across regions?
