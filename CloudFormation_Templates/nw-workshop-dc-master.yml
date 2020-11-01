@@ -557,6 +557,8 @@ Resources:
             sed -i "s/{PRIVATE_IP}/$PRIVATEIP/g" /etc/strongswan/ipsec.conf
             echo "$PUBLICIP $PRIVATEIP : PSK \"awsamazon\"" >> /etc/strongswan/ipsec.secrets
             systemctl enable strongswan
+            systemctl enable bgpd
+            systemctl restart bgpd
       Tags:
         - Key: Name
           Value: !Join [ '', [ 'OnPremBastion-', !Ref 'AWS::StackName' ] ]

@@ -83,4 +83,4 @@ Resources:
 
       Tags:
         - Key: Name
-          Value: Bastion Host
+          Value: !Join [ '', [ 'Bastion-', !Ref 'AWS::StackName' ] ]
