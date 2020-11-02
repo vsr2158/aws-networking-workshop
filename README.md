@@ -23,7 +23,7 @@ We will begin with a Multi VPC and Multi Account design that is uniqute to this 
 AWS Account ID | AWS Region | AWS Region CIDR | TGW AS Number| DC CIDR| DC AS Number| Student Number | Student Name
 ------------------|---------|-------------|----------------|-------------------|----------------|-------------|----
 AWS-Account-ID| us-east-1 |  10.0.0.0/16 | 64520 |192.168.0.0/24 | 65000| 0| Spider Man
-AWS-Account-ID| us-east-2 |  10.1.0.0/16 | 64521 |192.168.1.0/24 | 65001| 1| Captainm America
+AWS-Account-ID| us-east-2 |  10.1.0.0/16 | 64521 |192.168.1.0/24 | 65001| 1| Captain America
 AWS-Account-ID| us-west-1 |  10.2.0.0/16 | 64522 |192.168.2.0/24 | 65002| 2| Wonder Women
 AWS-Account-ID| us-west-2 |  10.3.0.0/16 | 64523 |192.168.3.0/24 | 65003| 3| Bat Man
 AWS-Account-ID| ap-south-1 |  10.X.0.0/16 | 6452x |192.168.x.0/24 | 6500X| x| XXXXXXXX

@@ -1,0 +1,206 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "VPC template for simulated on-prem environment. "
+Parameters:
+  SshAccessCidr:
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
+    Description: CIDR range permitted to SSH into the Bastion host.
+    Type: String
+    Default: 0.0.0.0/0
+  SshInstanceType:
+    AllowedValues:
+    - t2.nano
+    - t2.micro
+    - t3.nano
+    - t3.micro
+    Default: t2.micro
+    Description: Bastion EC2 instance type.
+    Type: String
+  LatestAmiId:
+    Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
+    Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
+  Tunnel1Ip:
+    Description: Enter the IP address for Tunnel 1 for the VPN connection
+    Type: String
+    Default: 1.1.1.1
+  Tunnel2Ip:
+    Description: Enter the IP address for Tunnel 1 for the VPN connection
+    Type: String
+    Default: 2.2.2.2
+  CgwAs:
+    Description: Enter AS Number specified on the Transit Gateway
+    Type: String
+    Default: 65000
+  TgwAs:
+    Description: Enter AS Number specified on the Transit Gateway
+    Type: String
+    Default: 64512
+  VpcCidr:
+    AllowedPattern: "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$"
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
+    Default: 192.168.0.0/24
+    Description: CIDR block for the VPC
+    Type: String
+Resources:
+  BastionHost:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref LatestAmiId
+      InstanceType: !Ref SshInstanceType
+      SecurityGroupIds: [sg-0ec0cd041ef5af4cd]
+      SubnetId: subnet-0bf6234e703190356
+      SourceDestCheck: false
+      UserData:
+        Fn::Base64:
+          !Sub |
+            #!/bin/bash
+            # configure password based logon via SSH
+            sudo su
+            /bin/echo 'pa55w0rd' | /bin/passwd ec2-user --stdin
+            sed -i  '/PasswordAuthentication/d' /etc/ssh/sshd_config
+            sed -i  '/PermitRootLogin/d' /etc/ssh/sshd_config
+            echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config
+            echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
+            systemctl restart sshd
+            yum update -y
+            yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+            amazon-linux-extras install epel
+            yum install -y strongswan quagga
+            groupadd -r quagga
+            groupadd -r quaggavt
+            useradd -r -g quagga quagga
+            cp /usr/share/doc/quagga-*/zebra.conf.sample /etc/quagga/zebra.conf
+            cp /usr/share/doc/quagga-*/bgpd.conf.sample /etc/quagga/bgpd.conf
+            chown -R quagga:quagga /etc/quagga
+            systemctl enable zebra
+            systemctl enable bgpd
+            echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf
+            sysctl -p /etc/sysctl.conf
+            PUBLICIP=$(curl -s http://169.254.169.254/2018-09-24/meta-data/public-ipv4)
+            PRIVATEIP=$(curl -s http://169.254.169.254/2018-09-24/meta-data/local-ipv4)
+            CgwAs='${CgwAs}'
+            TgwAs='${TgwAs}'
+            Tunnel1Ip='${Tunnel1Ip}'
+            Tunnel2Ip='${Tunnel2Ip}'
+
+            cat <<EOT >/etc/strongswan/ipsec.conf
+            conn %default
+              leftauth=psk
+              rightauth=psk
+              ike=aes128-sha1-modp1024!
+              ikelifetime=28800s
+              aggressive=no
+              esp=aes128-sha1-modp1024!
+              type=tunnel
+              dpddelay=10s
+              dpdtimeout=30s
+              keyexchange=ikev1
+              rekey=yes
+              reauth=no
+              dpdaction=restart
+              closeaction=restart
+              leftsubnet=0.0.0.0/0
+              rightsubnet=0.0.0.0/0
+              leftupdown=/etc/ipsec-vti.sh
+              installpolicy=yes
+              compress=no
+              mobike=no
+
+            conn dc2aws1
+              left={PRIVATE_IP}
+              leftid={PUBLIC_IP}
+              right=$Tunnel1Ip
+              rightid=$Tunnel1Ip
+              auto=start
+              mark=100
+
+            conn dc2aws2
+              left={PRIVATE_IP}
+              leftid={PUBLIC_IP}
+              right=$Tunnel2Ip
+              rightid=$Tunnel2Ip
+              auto=start
+              mark=200
+
+            EOT
+            cat <<EOT >/etc/quagga/bgpd.conf
+            hostname bgpd
+            password zebra
+            log stdout
+            !
+            router bgp $CgwAs
+            bgp router-id 192.168.0.190
+            network 192.168.0.0/16
+            neighbor 169.254.10.1 remote-as $TgwAs
+            neighbor 169.254.11.1 remote-as $TgwAs
+            !
+            line vty
+            !
+
+            EOT
+            cat <<'EOT' >>/etc/ipsec-vti.sh
+            IP=$(which ip)
+            IPTABLES=$(which iptables)
+
+            PLUTO_MARK_OUT_ARR=(${!PLUTO_MARK_OUT//// })
+            PLUTO_MARK_IN_ARR=(${!PLUTO_MARK_IN//// })
+            case "${!PLUTO_CONNECTION}" in
+              dc2aws1)
+                VTI_INTERFACE=vti1
+                VTI_LOCALADDR=169.254.10.2/30
+                VTI_REMOTEADDR=169.254.10.1/30
+                ;;
+              dc2aws2)
+                VTI_INTERFACE=vti2
+                VTI_LOCALADDR=169.254.11.2/30
+                VTI_REMOTEADDR=169.254.11.1/30
+                ;;
+              dc2aws3)
+                VTI_INTERFACE=vti3
+                VTI_LOCALADDR=169.254.12.2/30
+                VTI_REMOTEADDR=169.254.12.1/30
+                ;;
+              dc2aws4)
+                VTI_INTERFACE=vti4
+                VTI_LOCALADDR=169.254.13.2/30
+                VTI_REMOTEADDR=169.254.13.1/30
+                ;;
+            esac
+
+            case "${!PLUTO_VERB}" in
+              up-client)
+                ${!IP} link add ${!VTI_INTERFACE} type vti local ${!PLUTO_ME} remote ${!PLUTO_PEER} okey ${!PLUTO_MARK_OUT_ARR[0]} ikey ${!PLUTO_MARK_IN_ARR[0]}
+                sysctl -w net.ipv4.conf.${!VTI_INTERFACE}.disable_policy=1
+                sysctl -w net.ipv4.conf.${!VTI_INTERFACE}.rp_filter=2 || sysctl -w net.ipv4.conf.${!VTI_INTERFACE}.rp_filter=0
+                ${!IP} addr add ${!VTI_LOCALADDR} remote ${!VTI_REMOTEADDR} dev ${!VTI_INTERFACE}
+                ${!IP} link set ${!VTI_INTERFACE} up mtu 1436
+                ${!IPTABLES} -t mangle -I FORWARD -o ${!VTI_INTERFACE} -p tcp -m tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
+                ${!IPTABLES} -t mangle -I INPUT -p esp -s ${!PLUTO_PEER} -d ${!PLUTO_ME} -j MARK --set-xmark ${!PLUTO_MARK_IN}
+                ${!IP} route flush table 220
+                ;;
+              down-client)
+                ${!IP} link del ${!VTI_INTERFACE}
+                ${!IPTABLES} -t mangle -D FORWARD -o ${!VTI_INTERFACE} -p tcp -m tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
+                ${!IPTABLES} -t mangle -D INPUT -p esp -s ${!PLUTO_PEER} -d ${!PLUTO_ME} -j MARK --set-xmark ${!PLUTO_MARK_IN}
+                ;;
+            esac
+
+            sysctl -w net.ipv4.ip_forward=1
+            sysctl -w net.ipv4.conf.eth0.disable_xfrm=1
+            sysctl -w net.ipv4.conf.eth0.disable_policy=1
+
+            EOT
+            chmod +x /etc/ipsec-vti.sh
+            sed -i "s/{PUBLIC_IP}/$PUBLICIP/g" /etc/strongswan/ipsec.conf
+            sed -i "s/{PRIVATE_IP}/$PRIVATEIP/g" /etc/strongswan/ipsec.conf
+            echo "$PUBLICIP $PRIVATEIP : PSK \"awsamazon\"" >> /etc/strongswan/ipsec.secrets
+            systemctl enable strongswan
+            systemctl enable bgpd
+            systemctl restart strongswan
+            systemctl restart bgpd
+      Tags:
+        - Key: Name
+          Value: !Join [ '', [ 'OnPremBastion-', !Ref 'AWS::StackName' ] ]
+
+Outputs:
+  PublicIp:
+    Value: !GetAtt BastionHost.PublicIp
