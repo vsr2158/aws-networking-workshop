@@ -84,7 +84,7 @@ In this module we will simulate a Datacenter deployed on seperate AWS account (T
     * Navigate to `VPC` > `Customer Gateways` >  `Create Customer Gateway`
     * Name it a `Dummy-CGW1`
     * Routing `Dynamic`
-    * BGP ASN `as allocated under core instructions "TGW AS Number"`
+    * BGP ASN `as allocated under core instructions "DC AS Number"`
     * IP Address `1.1.1.1`
  * We will now create a VPN connection:
  * On the AWS console in ensure you are in the correct region:
@@ -104,7 +104,7 @@ In this module we will simulate a Datacenter deployed on seperate AWS account (T
   
 
 
-#### Deploy CloudFormation template
+#### Deploy CloudFormation template to simulate Datacenter
 * On AWS console of account #2, nagivate to `CloudFormation` service, ensure you are in the right region as allocated part of `Core Instructions`
 * Click on `Create Stack` > `Template is ready` > `Upload a template file` > `Chose file` > locate and upload the file named `nw-workshop-dc-master`
 * Input a meaningful `Stack Name`.
@@ -130,10 +130,20 @@ and leave the `EnvironemtName` as default.
 * Task: Explore the deployed resources, test SSH login to all the DC Bastion instances deployed by this CloudFormation stack.
 * Task: Note down the Bastion Host's public IP address, repeat the CGW creation steps exactly as before but this time specify Bastion Host's public IP address as CGW IP address
 
-We now have the DC environment ready, however the Site-2Site VPN is pointing the VPN tunnel to the Dummy-CGW lets replcace it with the corrent CGW
-* Navigate to `VPC` > `Site-to-Site VPN Connections` >   Select the VPN connection you created > under `Actions` > `Modify VPN Connection` > `Target Type` > `Customer Gateway` > Specify the newly created CGW > save
+We now have the DC environment ready, however the Site-2Site VPN is pointing the VPN tunnel to the Dummy-CGW lets replce it with the correct CGW
+ * We will start by creating a new and correct CGW device
+ * On the AWS console in ensure you are in the correct region:
+    * Navigate to `VPC` > `Customer Gateways` >  `Create Customer Gateway`
+    * Name it a `DC-CGW`
+    * Routing `Dynamic`
+    * BGP ASN `as allocated under core instructions "DC AS Number"`
+    * IP Address `specify the Public IP address of your DC bastion host`
+   
+* To replace the newly created CGW with Dummy-CGW Navigate to `VPC` > `Site-to-Site VPN Connections` >   Select the VPN connection you created > under `Actions` > `Modify VPN Connection` > `Target Type` > `Customer Gateway` > Specify the newly created CGW > save
 This step can take anytime between 5-15 mins, after the modification you should see both IPSEC Tunnels UP and BGP connections UP
 * Task: How does the TGW routing table look? is it learning routed from the VPN? are VPC route tables updated?
+* Task: Ping from the Bastion Host from your AWS VPC to the Datacenter DNS server
+
 
 
 
