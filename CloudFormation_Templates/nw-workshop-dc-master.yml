@@ -460,11 +460,13 @@ Resources:
             sysctl -p /etc/sysctl.conf
             PUBLICIP=$(curl -s http://169.254.169.254/2018-09-24/meta-data/public-ipv4)
             PRIVATEIP=$(curl -s http://169.254.169.254/2018-09-24/meta-data/local-ipv4)
+            PublicIp=$(curl -s http://169.254.169.254/2018-09-24/meta-data/public-ipv4)
+            PrivateIp=$(curl -s http://169.254.169.254/2018-09-24/meta-data/local-ipv4)
             CgwAs='${CgwAs}'
             TgwAs='${TgwAs}'
+            VpcCidr='${VpcCidr}'
             Tunnel1Ip='${Tunnel1Ip}'
             Tunnel2Ip='${Tunnel2Ip}'
-
             cat <<EOT >/etc/strongswan/ipsec.conf
             conn %default
               leftauth=psk
@@ -489,16 +491,16 @@ Resources:
               mobike=no
 
             conn dc2aws1
-              left={PRIVATE_IP}
-              leftid={PUBLIC_IP}
+              left=$PrivateIp
+              leftid=$PublicIp
               right=$Tunnel1Ip
               rightid=$Tunnel1Ip
               auto=start
               mark=100
 
             conn dc2aws2
-              left={PRIVATE_IP}
-              leftid={PUBLIC_IP}
+              left=$PrivateIp
+              leftid=$PublicIp
               right=$Tunnel2Ip
               rightid=$Tunnel2Ip
               auto=start
@@ -512,7 +514,7 @@ Resources:
             !
             router bgp $CgwAs
             bgp router-id 192.168.0.190
-            network 192.168.0.0/16
+            network $VpcCidr
             neighbor 169.254.10.1 remote-as $TgwAs
             neighbor 169.254.11.1 remote-as $TgwAs
             !
@@ -573,9 +575,7 @@ Resources:
 
             EOT
             chmod +x /etc/ipsec-vti.sh
-            sed -i "s/{PUBLIC_IP}/$PUBLICIP/g" /etc/strongswan/ipsec.conf
-            sed -i "s/{PRIVATE_IP}/$PRIVATEIP/g" /etc/strongswan/ipsec.conf
-            echo "$PUBLICIP $PRIVATEIP : PSK \"awsamazon\"" >> /etc/strongswan/ipsec.secrets
+            echo "$PublicIp $PrivateIp : PSK \"awsamazon\"" >> /etc/strongswan/ipsec.secrets
             systemctl enable strongswan
             systemctl enable bgpd
             systemctl restart strongswan

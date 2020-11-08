@@ -10,11 +10,11 @@
 ### Modules:
 * Module1: Deploy Multi VPC and Multi account networking architecture using VPC peering
 * Module2: AWS Transit Gateway deployment and migration from VPC peering 
-* Module3: Datacenter Connectivity
+* Module3: Data Center(DC) Connectivity
 * Module4: Transit Gateway Network Manager
 * Module5: Network Monitoring
 * Module6: Hybrid DNS basic lab1
-* Module7  Hybrid DNS Advanced
+* Module7: Hybrid DNS Advanced
   
 ### Core Instructions 
 
@@ -74,9 +74,9 @@ This module is now complete, please proceed to the next module.
 
 This module is now complete, please proceed to the next module.
 
-## Module3: Datacenter Connectivity
+## Module3: Data Center (DC) Connectivity
 
-In this module we will simulate a Datacenter deployed on seperate AWS account (This can be the same account in an unused region) 
+In this module we will simulate a DC deployed on seperate AWS account (This can be the same account in an unused region) 
 
 #### Create a site2site VPN in TGW
  * We will create a dummy CGW device, this will be replaced with a real CGW device later. Why?
@@ -104,7 +104,7 @@ In this module we will simulate a Datacenter deployed on seperate AWS account (T
   
 
 
-#### Deploy CloudFormation template to simulate Datacenter
+#### Deploy CloudFormation template to simulate DC
 * On AWS console of account #2, nagivate to `CloudFormation` service, ensure you are in the right region as allocated part of `Core Instructions`
 * Click on `Create Stack` > `Template is ready` > `Upload a template file` > `Chose file` > locate and upload the file named `nw-workshop-dc-master`
 * Input a meaningful `Stack Name`.
@@ -141,8 +141,9 @@ We now have the DC environment ready, however the Site-2Site VPN is pointing the
    
 * To replace the newly created CGW with Dummy-CGW Navigate to `VPC` > `Site-to-Site VPN Connections` >   Select the VPN connection you created > under `Actions` > `Modify VPN Connection` > `Target Type` > `Customer Gateway` > Specify the newly created CGW > save
 This step can take anytime between 5-15 mins, after the modification you should see both IPSEC Tunnels UP and BGP connections UP
-* Task: How does the TGW routing table look? is it learning routed from the VPN? are VPC route tables updated?
-* Task: Ping from the Bastion Host from your AWS VPC to the Datacenter DNS server
+* Task: How does the TGW routing table look? Is it learning routes from the VPN? Are VPC route tables updated automatically?
+* Task: Update VPC main route table to point to TGW Attachment for the DC VPC CIDR block. Ping from the Bastion Host from your AWS VPC to the DC DNS server to verify
+
 
 
 
