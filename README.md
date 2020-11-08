@@ -219,12 +219,24 @@ As you can see AWS to DC DNS resolution is working, next we will look at DNS res
         * Repeat for IP address#2, just select a different AZ and Subnet
         * Submit
         * Wait for completion before proceeding  
-        * Click on the endpoint name to get and make note of the IP addresses
+        * Click on the endpoint name to make note of the IP addresses
 
 Next step is to configure the DC DNS server to forward DNS queries for the PHZ towards the Inbound Endpoints
 * SSH to the DC DNS server via the Bastion host
     * Execute `sudo su`
-    * Execute ``
+    * Use vi or nano editor and open `/etc/named.conf`
+        * Locate `forwarders { 169.254.169.253; };` and replace the IP address with the IP address of the Inbound endpoint noted above
+    * Restart Bind service `systemctl restart named`
+    * Check Bind service `systemctl status named`
+    * Execute `dig aws0.com -t NS`. A successful respons shows bi directional DNS lookups are working
+
+
+This module is now complete, please proceed to the next module.
+
+    
+
+        
+    
     
   
 
