@@ -4,6 +4,8 @@ Parameters:
   ChildVPCCIDR:
     Description: VPC_CIDR
     Type: String
+  CloudFormationS3Bucket :
+    Type: String
 Resources:
   VPC:
     Type: AWS::EC2::VPC
@@ -38,30 +40,48 @@ Resources:
     Type: AWS::CloudFormation::Stack
     DependsOn: InternetGatewayAttachment
     Properties:
-      TemplateURL: https://977116943932-networking-workshop.s3.us-east-2.amazonaws.com/nw-workshop-public-subnet.yml
+      TemplateURL:
+        !Join
+        - ''
+        - - 'https://'
+          - !Ref CloudFormationS3Bucket
+          - '.s3.us-east-2.amazonaws.com/nw-workshop-public-subnet.yml'
       Parameters:
         ChildSubnetCIDR: !Select [ 0, !Cidr [ !Ref  ChildVPCCIDR, 4, 8 ]]
         VPC: !Ref VPC
         InternetGateway: !Ref InternetGateway
         InstanceSecurityGroup: !Ref InstanceSecurityGroup
+        CloudFormationS3Bucket: !Ref CloudFormationS3Bucket
   Subnet1:
     Type: AWS::CloudFormation::Stack
     DependsOn: InternetGatewayAttachment
     Properties:
-      TemplateURL: https://977116943932-networking-workshop.s3.us-east-2.amazonaws.com/nw-workshop-private-subnet.yml
+      TemplateURL:
+        !Join
+        - ''
+        - - 'https://'
+          - !Ref CloudFormationS3Bucket
+          - '.s3.us-east-2.amazonaws.com/nw-workshop-private-subnet.yml'
       Parameters:
         ChildSubnetCIDR: !Select [ 1, !Cidr [ !Ref  ChildVPCCIDR, 4, 8 ]]
         VPC: !Ref VPC
         InstanceSecurityGroup: !Ref InstanceSecurityGroup
+        CloudFormationS3Bucket: !Ref CloudFormationS3Bucket
   Subnet2:
     Type: AWS::CloudFormation::Stack
     DependsOn: InternetGatewayAttachment
     Properties:
-      TemplateURL: https://977116943932-networking-workshop.s3.us-east-2.amazonaws.com/nw-workshop-private-subnet.yml
+      TemplateURL:
+        !Join
+        - ''
+        - - 'https://'
+          - !Ref CloudFormationS3Bucket
+          - '.s3.us-east-2.amazonaws.com/nw-workshop-private-subnet.yml'
       Parameters:
         ChildSubnetCIDR: !Select [ 2, !Cidr [ !Ref  ChildVPCCIDR, 4, 8 ]]
         VPC: !Ref VPC
         InstanceSecurityGroup: !Ref InstanceSecurityGroup
+        CloudFormationS3Bucket: !Ref CloudFormationS3Bucket
 Outputs:
   ChildVPCCIDR:
     Value: !Ref ChildVPCCIDR

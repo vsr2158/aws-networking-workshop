@@ -146,6 +146,22 @@ This step can take anytime between 5-15 mins, after the modification you should 
 
 This module is now complete, please proceed to the next module.
 
+## Module4: Transit Gateway Network Manager
+In this module we will create and view AWS global network, a global network comprises of all networking resourdes and can only be registered once per Global Network.
+Hence this LAB needs to be performed by one individual in a given AWS account
+  * Navigate to `VPC` > `Network Manager` > `Create a global network`
+  * Name `GlobalNetworkX`
+  * Description `GlobalNetworkX`
+  * Create global network
+  * Click on the newly created global network and click on `Register Transit Gateway`
+    * All TGW in this account should show up there, select all of them and `Register Transit Gateway`
+    * Click on `Onboard cloudwatch log insight`
+    
+    
+  
+  
+  
+
 
 
 ## Module6: Hybrid DNS Basic AWS --> DC

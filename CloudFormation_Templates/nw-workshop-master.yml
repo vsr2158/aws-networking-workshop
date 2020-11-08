@@ -27,6 +27,7 @@ Resources:
             - '.s3.us-east-2.amazonaws.com/nw-workshop-vpc.yml'
       Parameters:
         ChildVPCCIDR: !Select [ 0, !Cidr [ !Ref  RegionCIDR, 2, 14 ]]
+        CloudFormationS3Bucket : !Ref CloudFormationS3Bucket
   VPC1:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -38,3 +39,4 @@ Resources:
             - '.s3.us-east-2.amazonaws.com/nw-workshop-vpc.yml'
      Parameters:
         ChildVPCCIDR: !Select [ 1, !Cidr [ !Ref  RegionCIDR, 2, 14 ]]
+        CloudFormationS3Bucket : !Ref CloudFormationS3Bucket

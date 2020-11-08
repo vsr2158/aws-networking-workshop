@@ -220,6 +220,8 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: !Ref SshAccessCidr
+        - IpProtocol: -1
+          CidrIp: !Ref VpcCidr
       Tags:
         - Key: Name
           Value: !Sub "OnPremBastionSecurityGroup-${AWS::StackName}"
