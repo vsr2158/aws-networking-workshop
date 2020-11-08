@@ -190,7 +190,7 @@ Your four convenience DNS server has already been deployed and configured in the
             Note: in real world its best to `Use an IP address that you specify` instead
             * Repeat for IP address#2, just select a different AZ and Subnet
             * Submit
-            Note: Endpoint creation can take around 5 min, wait for completion before proceeding  
+            * Wait for completion before proceeding  
    
    * Navigate to `Services` > `Route53` > `Rules` > `Create rule`
         * Name `example-corp`
@@ -218,7 +218,16 @@ As you can see AWS to DC DNS resolution is working, next we will look at DNS res
         Note: in real world its best to `Use an IP address that you specify` instead
         * Repeat for IP address#2, just select a different AZ and Subnet
         * Submit
-        Note: Endpoint creation can take around 5 min, wait for completion before proceeding  
+        * Wait for completion before proceeding  
+        * Click on the endpoint name to get and make note of the IP addresses
+
+Next step is to configure the DC DNS server to forward DNS queries for the PHZ towards the Inbound Endpoints
+* SSH to the DC DNS server via the Bastion host
+    * Execute `sudo su`
+    * Execute ``
+    
+  
+
 
             
             
