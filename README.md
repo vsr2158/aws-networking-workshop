@@ -28,8 +28,8 @@ Student Number | Student Name| AWS Account ID | AWS Region | AWS Region CIDR | T
 3| Bat Man| AWS-Account-ID| us-west-2 |  10.3.0.0/16 | 64603|aws3.com |192.168.3.0/24 | 65003| 
 x| XXXXXXXX| AWS-Account-ID| ap-south-1 |  10.X.0.0/16 | 6460x|awsx.com |192.168.x.0/24 | 6500X| 
 
+* All EC2 instance passwords are `pa55w0rd`
 * Download all the CloudFormation templates from the directory `/CloudFormation` and save on your workstation. 
-
 * In each AWS account create a S3 bucket with a unique name (S3 is a global namespace) like `<AWS-Account-ID>-nw-workshop-templates` and upload all the CloudFormation templates you downloaded in previous step. Note this needs to be done only once in each account.
 
 Your core steps are now complete, please proceed to the next module.
