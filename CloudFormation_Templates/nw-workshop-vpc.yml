@@ -61,7 +61,7 @@ Resources:
         - ''
         - - 'https://'
           - !Ref CloudFormationS3Bucket
-          - '.s3.us-east-2.amazonaws.com/nw-workshop-private-subnet.yml'
+          - '.s3.us-east-1.amazonaws.com/nw-workshop-private-subnet.yml'
       Parameters:
         ChildSubnetCIDR: !Select [ 1, !Cidr [ !Ref  ChildVPCCIDR, 4, 8 ]]
         VPC: !Ref VPC
@@ -76,7 +76,7 @@ Resources:
         - ''
         - - 'https://'
           - !Ref CloudFormationS3Bucket
-          - '.s3.us-east-2.amazonaws.com/nw-workshop-private-subnet.yml'
+          - '.s3.us-east-1.amazonaws.com/nw-workshop-private-subnet.yml'
       Parameters:
         ChildSubnetCIDR: !Select [ 2, !Cidr [ !Ref  ChildVPCCIDR, 4, 8 ]]
         VPC: !Ref VPC
