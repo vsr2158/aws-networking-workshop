@@ -15,7 +15,6 @@
 * Module5: Network Monitoring
 * Module6: Hybrid DNS Basic 
 * Module7: Hybrid DNS Advanced
-* Module8: GWLB
   
 ### Core Instructions 
 
