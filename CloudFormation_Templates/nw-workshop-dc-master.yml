@@ -196,6 +196,10 @@ Resources:
         - IpProtocol: udp
           FromPort: 53
           ToPort: 53
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 53
+          ToPort: 53
           CidrIp: "0.0.0.0/0"
         - IpProtocol: tcp
           FromPort: 22
@@ -206,6 +210,7 @@ Resources:
           Value: !Sub "OnPremDnsServerSecurityGroup-${AWS::StackName}"
       VpcId:
         !Ref Vpc
+
 
   BastionSecurityGroup:
     Type: AWS::EC2::SecurityGroup
