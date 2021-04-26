@@ -40,12 +40,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     DependsOn: InternetGatewayAttachment
     Properties:
-      TemplateURL:
-        !Join
-        - ''
-        - - 'https://'
-          - !Ref CloudFormationS3Bucket
-          - '.s3.us-east-2.amazonaws.com/nw-workshop-public-subnet.yml'
+      TemplateURL: https://raw.githubusercontent.com/vsr2158/aws-networking-workshop/github-direct/CloudFormation_Templates/nw-workshop-public-subnet.yml
       Parameters:
         ChildSubnetCIDR: !Select [ 0, !Cidr [ !Ref  ChildVPCCIDR, 4, 8 ]]
         VPC: !Ref VPC
@@ -56,12 +51,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     DependsOn: InternetGatewayAttachment
     Properties:
-      TemplateURL:
-        !Join
-        - ''
-        - - 'https://'
-          - !Ref CloudFormationS3Bucket
-          - '.s3.us-east-1.amazonaws.com/nw-workshop-private-subnet.yml'
+      TemplateURL: https://raw.githubusercontent.com/vsr2158/aws-networking-workshop/github-direct/CloudFormation_Templates/nw-workshop-private-subnet.yml
       Parameters:
         ChildSubnetCIDR: !Select [ 1, !Cidr [ !Ref  ChildVPCCIDR, 4, 8 ]]
         VPC: !Ref VPC
