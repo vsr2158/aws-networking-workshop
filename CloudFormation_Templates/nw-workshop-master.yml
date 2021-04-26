@@ -19,19 +19,14 @@ Resources:
   VPC0:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://raw.githubusercontent.com/vsr2158/aws-networking-workshop/master/CloudFormation_Templates/nw-workshop-vpc.yml
+      TemplateURL: https://raw.githubusercontent.com/vsr2158/aws-networking-workshop/github-direct/CloudFormation_Templates/nw-workshop-vpc.yml
       Parameters:
         ChildVPCCIDR: !Select [ 0, !Cidr [ !Ref  RegionCIDR, 2, 14 ]]
         CloudFormationS3Bucket : !Ref CloudFormationS3Bucket
   VPC1:
     Type: AWS::CloudFormation::Stack
     Properties:
-     TemplateURL:
-        !Join
-          - ''
-          - - 'https://'
-            - !Ref CloudFormationS3Bucket
-            - '.s3.us-east-1.amazonaws.com/nw-workshop-vpc.yml'
+     TemplateURL: https://raw.githubusercontent.com/vsr2158/aws-networking-workshop/github-direct/CloudFormation_Templates/nw-workshop-vpc.yml
      Parameters:
         ChildVPCCIDR: !Select [ 1, !Cidr [ !Ref  RegionCIDR, 2, 14 ]]
         CloudFormationS3Bucket : !Ref CloudFormationS3Bucket
